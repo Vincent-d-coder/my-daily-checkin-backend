@@ -24,25 +24,23 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 //test route for post man
 
 app.get("/api/health", (req, res) => {
-    res.json({ status: "API is running" });
+  res.json({ status: "API is running" });
 });
-
 
 const authRoutes = require("./routes/auth.routes");
 const checkinRoutes = require("./routes/checkin.routes");
 const authMiddleware = require("./middleware/auth.middleware");
+const goalRoutes = require("./routes/goal.routes");
 
 // PUBLIC routes
 app.use("/api/auth", authRoutes);
 
 // PROTECTED routes
 app.use("/api/checkin", authMiddleware, checkinRoutes);
-
+app.use("/api/goals", authMiddleware, goalRoutes);
 
 //central error handler
 const errorHandler = require("./middleware/error.middleware");

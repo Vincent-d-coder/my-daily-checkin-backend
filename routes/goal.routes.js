@@ -18,11 +18,13 @@ const housekeepingTasks = [
   "Laundry and linen sorting",
   "Restock housekeeping carts",
   "Clean staff break rooms",
-  "Organize storage rooms"
+  "Organize storage rooms",
 ];
 
 function getRandomTask() {
-  return housekeepingTasks[Math.floor(Math.random() * housekeepingTasks.length)];
+  return housekeepingTasks[
+    Math.floor(Math.random() * housekeepingTasks.length)
+  ];
 }
 
 // CREATE GOAL FOR TODAY
@@ -31,12 +33,12 @@ router.post("/today", isAuth, async (req, res) => {
     const { title, location } = req.body;
 
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     // prevent duplicate goal for same day
     const existingGoal = await Goal.findOne({
       user: req.user.id,
-      date: today
+      date: today,
     });
 
     if (existingGoal) {
@@ -59,16 +61,16 @@ router.post("/today", isAuth, async (req, res) => {
 // CREATE GOAL FOR TOMORROW (auto planner)
 router.post("/", isAuth, async (req, res) => {
   try {
-    const { title, location} = req.body;
+    const { title, location } = req.body;
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0,0,0,0);
+    tomorrow.setHours(0, 0, 0, 0);
 
     const goal = await Goal.create({
       user: req.user.id,
       title: title,
-    
+
       location: location || "Hotel",
       date: tomorrow,
     });
@@ -83,11 +85,11 @@ router.post("/", isAuth, async (req, res) => {
 router.get("/today", isAuth, async (req, res) => {
   try {
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     const goal = await Goal.findOne({
       user: req.user.id,
-      date: today
+      date: today,
     }).populate("checkins");
 
     res.json(goal);
@@ -99,18 +101,18 @@ router.get("/today", isAuth, async (req, res) => {
 router.get("/upcoming", isAuth, async (req, res) => {
   try {
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     const goals = await Goal.find({
       user: req.user.id,
-      date: { $gte: today} 
+      date: { $gte: today },
     })
-    .sort({date: 1})
-    .populate("checkins");
+      .sort({ date: 1 })
+      .populate("checkins");
 
     res.json(goals);
   } catch (err) {
-    res.status(500).json({message: err.message})
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -147,7 +149,6 @@ router.get("/:id", isAuth, async (req, res, next) => {
 });
 
 //goals for the next days
-
 
 router.put("/:id", isAuth, async (req, res, next) => {
   try {

@@ -1,5 +1,6 @@
 const express = require("express");
 const Goal = require("../models/Goal");
+const CheckIn = require("../models/CheckIn");
 const isAuth = require("../middleware/auth.middleware");
 const router = express.Router();
 
@@ -179,6 +180,13 @@ router.delete("/:id", isAuth, async (req, res, next) => {
 
     if (!goal) {
       return res.status(404).json({ message: "Goal not found" });
+    }
+
+    // remove check-ins when a goal is deleted
+    try {
+      await CheckIn.deleteMany({ goal: goal._id });
+    } catch (cleanupErr) {
+      console.error("Failed to delete related check-ins:", cleanupErr);
     }
 
     res.json({ message: "Goal deleted" });
